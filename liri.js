@@ -5,6 +5,7 @@ var keys = require("./keys.js");
 const axios = require("axios");
 const Spotify = require('node-spotify-api');
 const moment = require('moment');
+const fs = require("fs")
 const spotify = new Spotify({
   id: process.env.SPOTIFY_ID,
   secret: process.env.SPOTIFY_SECRET
@@ -12,7 +13,7 @@ const spotify = new Spotify({
 
 // input variables
 const command = process.argv[2]
-const input = process.argv.splice(3,process.argv.length).join("+");
+let input = process.argv.splice(3,process.argv.length).join("+");
 
 //bands in town api search 
 function getConcert() {
@@ -47,16 +48,8 @@ function getMovie() {
 );
 }
 
-// Artist(s)
-
-// The song's name
-
-// A preview link of the song from Spotify
-
-// The album that the song is from
-
 // spotify search
-function spotifyThis() {
+function spotifyThis(input) {
 
   spotify
   .request(`https://api.spotify.com/v1/search?q=${input}&type=track&limit=1`)
@@ -72,6 +65,20 @@ function spotifyThis() {
   });
 }
 
+// read random.txt file and run it through spotify api
+function doWhatItSays() {
+  fs.readFile("random.txt", "utf8", (error, data) => {
+
+    if (error) {
+      return console.log(error);
+    };
+    const dataArr = data.split(",");
+    let input = dataArr[1].replace(/ /g, " ");
+
+    spotifyThis(input);
+  });
+};
+
 // switch case for each command
 switch(command) {
   case "concert-this":
@@ -85,4 +92,9 @@ switch(command) {
   case "spotify-this-song":
   spotifyThis();
   break;
+
+  case "do-what-it-says":
+  doWhatItSays();
+  break;
+
 }
