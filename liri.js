@@ -13,16 +13,16 @@ const spotify = new Spotify({
 
 // input variables
 const command = process.argv[2]
-let input = process.argv.splice(3,process.argv.length).join("+");
+let userInput = process.argv.splice(3,process.argv.length).join("+");
 
 //bands in town api search 
 function getConcert() {
 
-axios.get("https://rest.bandsintown.com/artists/" + input + "/events?app_id=codingbootcamp").then(
+axios.get("https://rest.bandsintown.com/artists/" + userInput + "/events?app_id=codingbootcamp").then(
   function(response) {
-    console.log(response);
+    console.log("\n---------------\n")
     console.log("\nLocation: \n" + response.data[0].venue.city);
-    console.log("\nName of concert: \n" + response.data[0].venue.name);
+    console.log("\nName of venue: \n" + response.data[0].venue.name);
     const timeConverted = moment(response.data[0].datetime).format("MM DD YYYY [at] hh:mm:ss a");
     console.log("\nDate: \n" + timeConverted);
     console.log("\n---------------\n")
@@ -33,8 +33,9 @@ axios.get("https://rest.bandsintown.com/artists/" + input + "/events?app_id=codi
 // // OMDB search
 function getMovie() {
 
-  axios.get("http://www.omdbapi.com/?t=" + input + "&y=&plot=short&apikey=trilogy").then(
+  axios.get("http://www.omdbapi.com/?t=" + userInput + "&y=&plot=short&apikey=trilogy").then(
   function(response) {
+    console.log("\n---------------\n")
     console.log("\nTitle: \n" + response.data.Title);
     console.log("\nYear of Release: \n" + response.data.Year);
     console.log("\nIMDB Rating: \n" + response.data.imdbRating);
@@ -54,6 +55,7 @@ function spotifyThis(input) {
   spotify
   .request(`https://api.spotify.com/v1/search?q=${input}&type=track&limit=1`)
   .then(function(data) {
+    console.log("\n---------------\n")
     console.log("\n Artist: \n" + data.tracks.items[0].artists[0].name);
     console.log("\n Title: \n" + data.tracks.items[0].name);
     console.log("\n Preview link: \n" + data.tracks.items[0].preview_url);
@@ -73,9 +75,9 @@ function doWhatItSays() {
       return console.log(error);
     };
     const dataArr = data.split(",");
-    let input = dataArr[1].replace(/ /g, " ");
+    let userInput = dataArr[1].replace(/ /g, " ");
 
-    spotifyThis(input);
+    spotifyThis(userInput);
   });
 };
 
@@ -90,7 +92,7 @@ switch(command) {
   break;
 
   case "spotify-this-song":
-  spotifyThis();
+  spotifyThis(userInput);
   break;
 
   case "do-what-it-says":
